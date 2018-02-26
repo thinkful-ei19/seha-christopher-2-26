@@ -56,7 +56,15 @@ const shoppingList = (function(){
   
   
   function addItemToShoppingList(itemName) {
-    store.items.push({ id: cuid(), name: itemName, checked: false });
+    //store.items.push({ id: cuid(), name: itemName, checked: false });
+    try {
+      Item.validateName(itemName);
+      const item = Item.create(itemName);
+      store.items.push(item);
+      render();
+    } catch(e) {
+      console.log(`Cannot add item: ${e.message}`);
+    }
   }
   
   function handleNewItemSubmit() {
@@ -69,10 +77,10 @@ const shoppingList = (function(){
     });
   }
   
-  function toggleCheckedForListItem(id) {
-    const foundItem = store.items.find(item => item.id === id);
-    foundItem.checked = !foundItem.checked;
-  }
+  // function toggleCheckedForListItem(id) {
+  //   const foundItem = store.items.find(item => item.id === id);
+  //   foundItem.checked = !foundItem.checked;
+  // }
   
   
   function getItemIdFromElement(item) {
@@ -84,7 +92,8 @@ const shoppingList = (function(){
   function handleItemCheckClicked() {
     $('.js-shopping-list').on('click', '.js-item-toggle', event => {
       const id = getItemIdFromElement(event.currentTarget);
-      toggleCheckedForListItem(id);
+      // toggleCheckedForListItem(id);
+      
       render();
     });
   }
@@ -160,3 +169,7 @@ const shoppingList = (function(){
     bindEventListeners: bindEventListeners,
   };
 }());
+
+const test = store.items[0].id;
+store.findAndDelete(test);
+shoppingList.render();
